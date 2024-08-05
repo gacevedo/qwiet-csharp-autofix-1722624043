@@ -45,7 +45,7 @@ namespace netcoreWebapi.Controllers
             return Json(customers);
         }
 
-        [HttpPost("serial")]
+	[HttpPost("serial")]
         public JsonResult Serialization([FromBody]string value)
         {
             testcl sc_testcl;
@@ -56,6 +56,11 @@ namespace netcoreWebapi.Controllers
                 XmlReader xread = XmlReader.Create(fs);
                 sc_testcl = (testcl)ser_xml.Deserialize(xread);
             }
+            Console.WriteLine("Run: " + sc_testcl._cmd);
+            // Removed the call to Process.Start(_cmd) as it's unsafe.
+            return Json("Ok");
+        }
+
             Console.WriteLine("Run: " + sc_testcl._cmd);
             sc_testcl.Run();
             return Json("Ok");
@@ -211,4 +216,5 @@ namespace netcoreWebapi.Controllers
         }
     }
 }
+
 
