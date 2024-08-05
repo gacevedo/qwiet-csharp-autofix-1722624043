@@ -92,15 +92,22 @@ namespace netcoreWebapi.Controllers
         }
 
         [HttpGet("Add")]
-        public JsonResult Get(string sql)
-        {
-            const string connection = @"Data Source=MyData;Initial Catalog=Product;Trusted_Connection=true";
-            var conn = new SqlConnection(connection);
-            string query = "INSERT INTO customers " + sql;
-            var command = new SqlCommand(query, conn);
-            int result = command.ExecuteNonQuery();
-            return Json(string.Format("Result: {0}", result));
-        }
+	[HttpGet("Add")]
+	public JsonResult Get(string sql)
+	{
+	    const string connection = @"Data Source=MyData;Initial Catalog=Product;Trusted_Connection=true";
+	    var conn = new SqlConnection(connection);
+	    conn.Open();
+	    using (var command = new SqlCommand())
+	    {
+	        command.Connection = conn;
+	        // Use parameterized query to prevent SQL injection
+	        command.CommandText = "INSERT INTO customers (@sql)";
+	        command.Parameters.AddWithValue("@sql", sql);
+	        int result = command.ExecuteNonQuery();
+	        return Json(string.Format("Result: {0}", result));
+	    }
+	}
 
         [HttpPost("xxeSafe")]
         public JsonResult TextReaderSafe([FromBody] string xmldata)
@@ -204,3 +211,4 @@ namespace netcoreWebapi.Controllers
         }
     }
 }
+
