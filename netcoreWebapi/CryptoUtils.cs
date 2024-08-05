@@ -6,17 +6,17 @@ namespace netcoreWebapi
 {
     public class CryptoUtils
     {
-        public static string CalcMD5Hex(string input)
+	public static string CalcMD5Hex(string input)
         {
-            MD5CryptoServiceProvider x = new MD5CryptoServiceProvider();
-            byte[] bs = Encoding.UTF8.GetBytes(input);
-            bs = x.ComputeHash(bs);
-            StringBuilder s = new StringBuilder();
-            foreach (byte b in bs)
+            using (var md5 = MD5.Create())
             {
-                s.Append(b.ToString("x2").ToLower());
+                var hash = md5.ComputeHash(Encoding.UTF8.GetBytes(input));
+                return new string(hash.Select(x => x.ToString("x2")).ToArray());
             }
+        }
+
             return s.ToString();
         }
     }
 }
+
